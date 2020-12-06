@@ -22,13 +22,7 @@ const App = () => {
 				))}
 			</ScrollView>
 
-			<TextInput
-				style={styles.todoInput}
-				required={false}
-				value={input}
-				maxLength={40}
-				onChangeText={(text) => setInput(text)}
-			/>
+			<TextInput style={styles.todoInput} value={input} maxLength={40} onChangeText={(text) => setInput(text)} />
 			<Button onPress={addTodo} title="Add Todo" />
 		</SafeAreaView>
 	);
