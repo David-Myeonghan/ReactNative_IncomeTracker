@@ -9,17 +9,43 @@ import {
 	ContributionGraph,
 	StackedBarChart,
 } from "react-native-chart-kit";
+import moment from "moment";
 
 const App = () => {
 	const [description, setDescription] = useState("");
 	const [amount, setAmount] = useState(0);
 	const [total, setTotal] = useState(0);
+	const [data, setData] = useState([
+		{
+			date: moment().format("LL"),
+			amount: 1000,
+		},
+		{ date: moment().subtract(1, "days").format("LL"), amount: 1000 },
+		{ date: moment().subtract(1, "days").format("LL"), amount: 1000 },
+		{ date: moment().subtract(2, "days").format("LL"), amount: 1000 },
+		{ date: moment().subtract(2, "days").format("LL"), amount: 1000 },
+	]);
+
+	const groupBy = (array, key) =>
+		array.reduce((rv, x) => {
+			(rv[x[key]] = rv[x[key]] || []).push(x);
+			return rv;
+		}, {});
+
 	const [gigs, setGigs] = useState([
 		{
 			description: "Freelance job",
 			amount: 500.0,
+			timestamp: new Date(),
 		},
 	]);
+
+	const getDates = () => data.map((pair) => pair.date);
+	const getAmounts = () => data.map((pair) => pair.amount);
+
+	console.log(getDates());
+	console.log(getAmounts());
+	console.log(groupBy(data, "date"));
 
 	useEffect(() => {
 		setTotal(gigs.reduce((total, gig) => total + Number(gig.amount), 0));
@@ -48,17 +74,10 @@ const App = () => {
 				<Text>Bezier Line Chart</Text>
 				<LineChart
 					data={{
-						labels: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+						labels: getDates(),
 						datasets: [
 							{
-								data: [
-									Math.random() * 100,
-									Math.random() * 100,
-									Math.random() * 100,
-									Math.random() * 100,
-									Math.random() * 100,
-									Math.random() * 100,
-								],
+								data: getAmounts(),
 							},
 						],
 					}}
