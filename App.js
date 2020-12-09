@@ -21,9 +21,9 @@ const App = () => {
 			amount: 1000,
 		},
 		{ date: moment().subtract(1, "days").format("LL"), amount: 1000 },
-		{ date: moment().subtract(1, "days").format("LL"), amount: 1000 },
-		{ date: moment().subtract(2, "days").format("LL"), amount: 1000 },
-		{ date: moment().subtract(2, "days").format("LL"), amount: 1000 },
+		{ date: moment().subtract(1, "days").format("LL"), amount: 2000 },
+		{ date: moment().subtract(2, "days").format("LL"), amount: 1500 },
+		{ date: moment().subtract(2, "days").format("LL"), amount: 2500 },
 	]);
 
 	const groupBy = (array, key) =>
@@ -42,10 +42,20 @@ const App = () => {
 
 	const getDates = () => data.map((pair) => pair.date);
 	const getAmounts = () => data.map((pair) => pair.amount);
+	const transformData = (groupedData) => {
+		const transformedArray = [];
+
+		Object.entries(groupedData).forEach((entry) => {
+			const total = entry[1].reduce((total, pair) => total + pair.amount, 0);
+			transformedArray.push({ date: entry[0], amount: total });
+		});
+		return transformedArray;
+	};
 
 	console.log(getDates());
 	console.log(getAmounts());
 	console.log(groupBy(data, "date"));
+	console.log(transformData(groupBy(data, "date")));
 
 	useEffect(() => {
 		setTotal(gigs.reduce((total, gig) => total + Number(gig.amount), 0));
