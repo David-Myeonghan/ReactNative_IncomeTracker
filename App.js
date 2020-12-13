@@ -21,10 +21,20 @@ const App = () => {
 			amount: 1000,
 		},
 		{ date: moment().subtract(1, "days").format("LL"), amount: 1000 },
+		{ date: moment().subtract(3, "days").format("LL"), amount: 1000 },
+		{ date: moment().subtract(3, "days").format("LL"), amount: 1000 },
+		{ date: moment().subtract(4, "days").format("LL"), amount: 1000 },
+		{ date: moment().subtract(5, "days").format("LL"), amount: 1000 },
+		{ date: moment().subtract(6, "days").format("LL"), amount: 1000 },
 		{ date: moment().subtract(1, "days").format("LL"), amount: 2000 },
 		{ date: moment().subtract(2, "days").format("LL"), amount: 1500 },
 		{ date: moment().subtract(2, "days").format("LL"), amount: 2500 },
 	]);
+	const [transformedData, setTransformedData] = useState([]);
+
+	useEffect(() => {
+		setTransformedData(transformData(groupBy(data, "date")));
+	}, [data]);
 
 	const groupBy = (array, key) =>
 		array.reduce((rv, x) => {
@@ -40,16 +50,19 @@ const App = () => {
 		},
 	]);
 
-	const getDates = () => data.map((pair) => pair.date);
-	const getAmounts = () => data.map((pair) => pair.amount);
+	const getDates = () => transformedData.map((pair) => pair.date);
+	const getAmounts = () => transformedData.map((pair) => pair.amount);
 	const transformData = (groupedData) => {
 		const transformedArray = [];
 
 		Object.entries(groupedData).forEach((entry) => {
 			const total = entry[1].reduce((total, pair) => total + pair.amount, 0);
-			transformedArray.push({ date: entry[0], amount: total });
+			transformedArray.push({ date: moment(entry[0]).format("DD/MM"), amount: total });
 		});
-		return transformedArray;
+
+		const sortedArray = transformedArray.sort((a, b) => moment(a["date"]).diff(moment(b["date"])));
+
+		return sortedArray;
 	};
 
 	console.log(getDates());
@@ -67,7 +80,14 @@ const App = () => {
 			{
 				description: description,
 				amount: amount,
-				timestamp: new Date(),
+			},
+		]);
+
+		setData([
+			...data,
+			{
+				date: moment().format("LL"),
+				amount: Number(amount),
 			},
 		]);
 
@@ -94,7 +114,7 @@ const App = () => {
 					width={Dimensions.get("window").width} // from react-native
 					height={220}
 					yAxisLabel="$"
-					yAxisSuffix="k"
+					// yAxisSuffix="k"
 					yAxisInterval={1} // optional, defaults to 1
 					chartConfig={{
 						backgroundColor: "#e26a00",
